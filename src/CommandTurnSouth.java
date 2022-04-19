@@ -1,11 +1,11 @@
 public class CommandTurnSouth extends Command{
 
-    public CommandTurnSouth(Player player, int tick) {
-        super(player, tick);
+    public CommandTurnSouth(Head head, int tick) {
+        super(head, tick);
     }
 
     @Override
     public void execute() {
-        getPlayer().turnSouth();
+        getHead().turnSouth();
     }
 }

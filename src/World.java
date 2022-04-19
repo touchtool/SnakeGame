@@ -10,7 +10,7 @@ public class World extends Observable {
     private int tick;
     private int size;
 
-    private Player player;
+    private Head head;
 
     private int tailsCount = 2;
     private List<Tails> tails;
@@ -18,19 +18,19 @@ public class World extends Observable {
 
     private Thread thread;
     private boolean notOver;
-    private long delayed = 500;
-    private int enemyCount = 10;
-    private Enemy [] enemies;
-    private Enemy [] enemiesStart;
+    private long delayed = 200;
+    private int foodCount = 10;
+    private Food [] foods;
+    private Food [] foodsStart;
 
     public World(int size) {
         this.size = size;
         tick = 0;
-        player = new Player(size/2, size/2);
+        head = new Head(size/2, size/2);
         tails = new ArrayList<Tails>();
         tailsStart = new ArrayList<Tails>();
-        tails.add(new Tails(player.getX(), player.getY()+1));
-        tailsStart.add(new Tails(player.getX(), player.getY()+1));
+        tails.add(new Tails(head.getX(), head.getY()+1));
+        tailsStart.add(new Tails(head.getX(), head.getY()+1));
         for(int i = 1; i < tailsCount; i++) {
             int x = tails.get(i-1).getX();
             int y = tails.get(i-1).getY() + 1;
@@ -38,29 +38,27 @@ public class World extends Observable {
             tailsStart.add(new Tails(x, y));
         }
 
-        enemies = new Enemy[enemyCount];
-        enemiesStart = new Enemy[enemyCount];
+        foods = new Food[foodCount];
+        foodsStart = new Food[foodCount];
         Random random = new Random();
-        for(int i = 0; i < enemies.length; i++) {
+        for(int i = 0; i < foods.length; i++) {
             int x = random.nextInt(size);
             int y = random.nextInt(size);
-            enemies[i] = new Enemy(x, y);
-            enemiesStart[i] = new Enemy(x, y);
+            foods[i] = new Food(x, y);
+            foodsStart[i] = new Food(x, y);
         }
-        // enemies[enemies.length] = new Enemy((size/2), (size/2)+2);
     }
 
     public void start() {
-        player.reset();
+        head.reset();
         tails.removeAll(tails);
-        player.turnNorth();
-        player.setPosition(size/2, size/2);
-        tails.add(new Tails(player.getX(), player.getY()+1));
-        for(int i = 0; i < tails.size()-1; i++) {
-            tails.get(i).setPosition(tailsStart.get(i).getX(), tailsStart.get(i).getY());
+        head.setPosition(size/2, size/2);
+        head.turnNorth();
+        for(int i = 0; i < tailsStart.size(); i++) {
+            tails.add(new Tails(tailsStart.get(i).getX(), tailsStart.get(i).getY()));
         }
-        for(int i = 0; i < enemies.length; i++) {
-            enemies[i].setPosition(enemiesStart[i].getX(), enemiesStart[i].getY());
+        for(int i = 0; i < foods.length; i++) {
+            foods[i].setPosition(foodsStart[i].getX(), foodsStart[i].getY());
         }
         tick = 0;
         notOver = true;
@@ -69,14 +67,15 @@ public class World extends Observable {
             public void run() {
                 while(notOver) {
                     tick++;
-                    int x = player.getX();
-                    int y = player.getY();
-                    player.move();
+                    int x = head.getX();
+                    int y = head.getY();
+                    head.move();
                     for(int i = tails.size()-1; i > 0; i--) {
                         tails.get(i).setPosition(tails.get(i-1).getX(), tails.get(i-1).getY());
                     }
                     tails.get(0).setPosition(x, y);
                     checkCollisions();
+                    checkBorder();
                     checkEat();
                     setChanged();
                     notifyObservers();
@@ -89,23 +88,37 @@ public class World extends Observable {
 
     private void checkCollisions() {
         for(Tails t : tails) {
-            if(player.hit(t)) {
+            if(head.hit(t)) {
                 notOver = false;
             }
         }
     }
 
+    private void checkBorder() {
+        if (head.getX() < 0){
+            head.setPosition(size-1, head.getY());
+        } else if (head.getX() > size-1) {
+            head.setPosition(0, head.getY());
+        } else if (head.getY() < 0) {
+            head.setPosition(head.getX(), size-1);
+        } else if (head.getY() > size-1) {
+            head.setPosition(head.getX(), 0);
+        }
+    }
+
     private void checkEat() {
-        for(Enemy e : enemies) {
-            if(player.hit(e)) {
+        for(Food e : foods) {
+            if(head.hit(e)) {
                 int x = tails.get(tails.size()-1).getX();
                 int y = tails.get(tails.size()-1).getY();
-                if (player.getdX() != 0) {
-                    x = x + player.getdX()*(-1);
-                }else if (player.getdY() != 0) {
-                    y = y + player.getdY()*(-1);
-                }
+                // if (head.getdX() != 0) {
+                //     x = x + head.getdX()*(-1);
+                // }else if (head.getdY() != 0) {
+                //     y = y + head.getdY()*(-1);
+                // }
                 tails.add(new Tails(x, y));
+                Random random = new Random();
+                e.setPosition(random.nextInt(size), random.nextInt(size));
             }
         }
     }
@@ -126,28 +139,28 @@ public class World extends Observable {
         return size;
     }
 
-    public Player getPlayer() {
-        return player;
+    public Head getHead() {
+        return head;
     }
 
-    public void turnPlayerNorth() {
-        player.turnNorth();
+    public void turnHeadNorth() {
+        head.turnNorth();
     }
 
-    public void turnPlayerSouth() {
-        player.turnSouth();
+    public void turnHeadSouth() {
+        head.turnSouth();
     }
 
-    public void turnPlayerWest() {
-        player.turnWest();
+    public void turnHeadWest() {
+        head.turnWest();
     }
 
-    public void turnPlayerEast() {
-        player.turnEast();
+    public void turnHeadEast() {
+        head.turnEast();
     }
 
-    public Enemy[] getEnemies() {
-        return enemies;
+    public Food[] getFoods() {
+        return foods;
     }
 
     public List<Tails> getTails() {

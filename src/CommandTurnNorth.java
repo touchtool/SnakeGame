@@ -1,11 +1,11 @@
 public class CommandTurnNorth extends Command{
 
-    public CommandTurnNorth(Player player, int tick) {
-        super(player, tick);
+    public CommandTurnNorth(Head head, int tick) {
+        super(head, tick);
     }
 
     @Override
     public void execute() {
-        getPlayer().turnNorth();
+        getHead().turnNorth();
     }
 }

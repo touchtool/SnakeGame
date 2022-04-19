@@ -1,16 +1,16 @@
 public abstract class Command {
-    private Player player;
+    private Head head;
     private int tick;
 
-    public Command(Player player, int tick) {
-        this.player = player;
+    public Command(Head head, int tick) {
+        this.head = head;
         this.tick = tick;
     }
 
     public abstract void execute();
 
-    public Player getPlayer() {
-        return player;
+    public Head getHead() {
+        return head;
     }
 
     public int getTick() {

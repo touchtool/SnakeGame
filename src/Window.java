@@ -59,37 +59,37 @@ public class Window extends JFrame implements Observer {
         public void paint(Graphics g) {
             super.paint(g);
             paintGrids(g);
-            paintPlayer(g);
-            paintEnemies(g);
+            paintHead(g);
+            paintFoods(g);
             paintTails(g);
         }
 
         private void paintGrids(Graphics g) {
             // Background
-            g.setColor(Color.lightGray);
+            g.setColor(Color.black);
             g.fillRect(0, 0, size, size);
 
             // Lines
-            g.setColor(Color.black);
-            int perCell = size/world.getSize();
-            for(int i = 0; i < world.getSize(); i++) {
-                g.drawLine(i * perCell, 0, i * perCell, size);
-                g.drawLine(0, i * perCell, size, i * perCell);
-            }
+            // g.setColor(Color.gray);
+            // int perCell = size/world.getSize();
+            // for(int i = 0; i < world.getSize(); i++) {
+            //     g.drawLine(i * perCell, 0, i * perCell, size);
+            //     g.drawLine(0, i * perCell, size, i * perCell);
+            // }
         }
 
-        private void paintPlayer(Graphics g) {
+        private void paintHead(Graphics g) {
             int perCell = size/world.getSize();
-            int x = world.getPlayer().getX();
-            int y = world.getPlayer().getY();
-            g.setColor(Color.green);
+            int x = world.getHead().getX();
+            int y = world.getHead().getY();
+            g.setColor(Color.blue);
             g.fillRect(x * perCell,y * perCell,perCell, perCell);
         }
 
-        private void paintEnemies(Graphics g) {
+        private void paintFoods(Graphics g) {
             int perCell = size/world.getSize();
             g.setColor(Color.red);
-            for(Enemy e : world.getEnemies()) {
+            for(Food e : world.getFoods()) {
                 int x = e.getX();
                 int y = e.getY();
                 g.fillRect(x * perCell,y * perCell,perCell, perCell);
@@ -98,7 +98,7 @@ public class Window extends JFrame implements Observer {
 
         private void paintTails(Graphics g) {
             int perCell = size/world.getSize();
-            g.setColor(Color.black);
+            g.setColor(Color.green);
             for(Tails t : world.getTails()) {
                 int x = t.getX();
                 int y = t.getY();
@@ -162,23 +162,23 @@ public class Window extends JFrame implements Observer {
         @Override
         public void keyPressed(KeyEvent e) {
             if(e.getKeyCode() == KeyEvent.VK_UP) {
-                Command c = new CommandTurnNorth(world.getPlayer(), world.getTick());
+                Command c = new CommandTurnNorth(world.getHead(), world.getTick());
                 c.execute();
                 replays.add(c);
             } else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
-                Command c = new CommandTurnSouth(world.getPlayer(), world.getTick());
+                Command c = new CommandTurnSouth(world.getHead(), world.getTick());
                 c.execute();
                 replays.add(c);
             } else if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-                Command c = new CommandTurnWest(world.getPlayer(), world.getTick());
+                Command c = new CommandTurnWest(world.getHead(), world.getTick());
                 c.execute();
                 replays.add(c);
             } else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                Command c = new CommandTurnEast(world.getPlayer(), world.getTick());
+                Command c = new CommandTurnEast(world.getHead(), world.getTick());
                 c.execute();
                 replays.add(c);
             } else if(e.getKeyCode() == KeyEvent.VK_Z){
-                Command c = new CommandTeleport(world.getPlayer(), world.getTick(), world.getSize());
+                Command c = new CommandTeleport(world.getHead(), world.getTick(), world.getSize());
                 c.execute();
                 replays.add(c);
             }
