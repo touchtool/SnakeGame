@@ -1,5 +1,9 @@
 import java.util.Observable;
 import java.util.Random;
+import java.util.List;
+import java.util.ArrayList;
+
+import javax.swing.plaf.TableUI;
 
 public class World extends Observable {
 
@@ -7,6 +11,11 @@ public class World extends Observable {
     private int size;
 
     private Player player;
+
+    private int tailsCount = 2;
+    private List<Tails> tails;
+    private List<Tails> tailsStart;
+
     private Thread thread;
     private boolean notOver;
     private long delayed = 500;
@@ -18,6 +27,17 @@ public class World extends Observable {
         this.size = size;
         tick = 0;
         player = new Player(size/2, size/2);
+        tails = new ArrayList<Tails>();
+        tailsStart = new ArrayList<Tails>();
+        tails.add(new Tails(player.getX(), player.getY()+1));
+        tailsStart.add(new Tails(player.getX(), player.getY()+1));
+        for(int i = 1; i < tailsCount; i++) {
+            int x = tails.get(i-1).getX();
+            int y = tails.get(i-1).getY() + 1;
+            tails.add(new Tails(x, y));
+            tailsStart.add(new Tails(x, y));
+        }
+
         enemies = new Enemy[enemyCount];
         enemiesStart = new Enemy[enemyCount];
         Random random = new Random();
@@ -32,7 +52,13 @@ public class World extends Observable {
 
     public void start() {
         player.reset();
+        tails.removeAll(tails);
+        player.turnNorth();
         player.setPosition(size/2, size/2);
+        tails.add(new Tails(player.getX(), player.getY()+1));
+        for(int i = 0; i < tails.size()-1; i++) {
+            tails.get(i).setPosition(tailsStart.get(i).getX(), tailsStart.get(i).getY());
+        }
         for(int i = 0; i < enemies.length; i++) {
             enemies[i].setPosition(enemiesStart[i].getX(), enemiesStart[i].getY());
         }
@@ -43,11 +69,15 @@ public class World extends Observable {
             public void run() {
                 while(notOver) {
                     tick++;
+                    int x = player.getX();
+                    int y = player.getY();
                     player.move();
-                    for(int i = 0; i < enemies.length; i++) {
-                        enemies[i].moveStalkerEnermy(player.getX(), player.getY(), tick);
+                    for(int i = tails.size()-1; i > 0; i--) {
+                        tails.get(i).setPosition(tails.get(i-1).getX(), tails.get(i-1).getY());
                     }
+                    tails.get(0).setPosition(x, y);
                     checkCollisions();
+                    checkEat();
                     setChanged();
                     notifyObservers();
                     waitFor(delayed);
@@ -58,9 +88,24 @@ public class World extends Observable {
     }
 
     private void checkCollisions() {
-        for(Enemy e : enemies) {
-            if(e.hit(player)) {
+        for(Tails t : tails) {
+            if(player.hit(t)) {
                 notOver = false;
+            }
+        }
+    }
+
+    private void checkEat() {
+        for(Enemy e : enemies) {
+            if(player.hit(e)) {
+                int x = tails.get(tails.size()-1).getX();
+                int y = tails.get(tails.size()-1).getY();
+                if (player.getdX() != 0) {
+                    x = x + player.getdX()*(-1);
+                }else if (player.getdY() != 0) {
+                    y = y + player.getdY()*(-1);
+                }
+                tails.add(new Tails(x, y));
             }
         }
     }
@@ -103,6 +148,10 @@ public class World extends Observable {
 
     public Enemy[] getEnemies() {
         return enemies;
+    }
+
+    public List<Tails> getTails() {
+        return tails;
     }
 
     public boolean isGameOver() {

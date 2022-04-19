@@ -61,6 +61,7 @@ public class Window extends JFrame implements Observer {
             paintGrids(g);
             paintPlayer(g);
             paintEnemies(g);
+            paintTails(g);
         }
 
         private void paintGrids(Graphics g) {
@@ -91,6 +92,16 @@ public class Window extends JFrame implements Observer {
             for(Enemy e : world.getEnemies()) {
                 int x = e.getX();
                 int y = e.getY();
+                g.fillRect(x * perCell,y * perCell,perCell, perCell);
+            }
+        }
+
+        private void paintTails(Graphics g) {
+            int perCell = size/world.getSize();
+            g.setColor(Color.black);
+            for(Tails t : world.getTails()) {
+                int x = t.getX();
+                int y = t.getY();
                 g.fillRect(x * perCell,y * perCell,perCell, perCell);
             }
         }

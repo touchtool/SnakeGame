@@ -74,6 +74,14 @@ public abstract class WObject {
         return y;
     }
 
+    public int getdX() {
+        return dx;
+    }
+
+    public int getdY() {
+        return dy;
+    }
+
     public void reset() {
         dx = dy = 0;
     }
