@@ -82,7 +82,7 @@ public class Window extends JFrame implements Observer {
             int perCell = size/world.getSize();
             int x = world.getHead().getX();
             int y = world.getHead().getY();
-            g.setColor(Color.blue);
+            g.setColor(Color.green);
             g.fillRect(x * perCell,y * perCell,perCell, perCell);
         }
 

@@ -40,29 +40,19 @@ public abstract class WObject {
         this.y += dy;
     }
 
-    public void moveStalkerEnermy(int disX, int disY, int tick) {
+    public void generateFood(int disX, int disY, int tick) {
         if (tick % 2 == 0) {
-            if (this.x < disX && this.y < disY) {
-                this.x += 1;
-                this.y += 1;
-            } else if (this.x < disX && this.y > disY) {
-                this.x += 1;
-                this.y -= 1;
-            } else if (this.x > disX && this.y < disY) {
-                this.x -= 1;
-                this.y += 1;
-            } else if (this.x > disX && this.y > disY) {
-                this.x -= 1;
-                this.y -= 1;
-            } else if (this.x == disX && this.y > disY) {
-                this.y -= 1;
-            } else if (this.x == disX && this.y < disY) {
-                this.y += 1;
-            } else if (this.x > disX && this.y == disY) {
-                this.x -= 1;
-            } else if (this.x < disX && this.y == disY) {
-                this.x += 1;
-            } 
+            this.x = disX + 10;
+            this.y = disY + 10;
+        } else if (tick % 3 == 0){
+            this.x = disX + 20;
+            this.y = disY + 20;
+        } else if (tick % 5 == 0){
+            this.x = disX + 30;
+            this.y = disY + 30;
+        } else if (tick % 7 == 0){
+            this.x = disX + 40;
+            this.y = disY + 40;
         }
     }
 

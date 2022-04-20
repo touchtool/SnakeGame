@@ -12,11 +12,12 @@ public class World extends Observable {
 
     private Head head;
 
-    private int tailsCount = 2;
+    private int initTails = 2;
     private List<Tails> tails;
-    private List<Tails> tailsStart;
+    private Tails [] tailsStart;
 
     private Thread thread;
+    private long randomSeed = System.currentTimeMillis();
     private boolean notOver;
     private long delayed = 200;
     private int foodCount = 10;
@@ -28,14 +29,14 @@ public class World extends Observable {
         tick = 0;
         head = new Head(size/2, size/2);
         tails = new ArrayList<Tails>();
-        tailsStart = new ArrayList<Tails>();
+        tailsStart = new Tails[initTails];
         tails.add(new Tails(head.getX(), head.getY()+1));
-        tailsStart.add(new Tails(head.getX(), head.getY()+1));
-        for(int i = 1; i < tailsCount; i++) {
+        tailsStart[0] = new Tails(head.getX(), head.getY()+1);
+        for(int i = 1; i < initTails; i++) {
             int x = tails.get(i-1).getX();
             int y = tails.get(i-1).getY() + 1;
             tails.add(new Tails(x, y));
-            tailsStart.add(new Tails(x, y));
+            tailsStart[i] = new Tails(x, y);
         }
 
         foods = new Food[foodCount];
@@ -51,11 +52,12 @@ public class World extends Observable {
 
     public void start() {
         head.reset();
+        Random generateFood = new Random(randomSeed);
         tails.removeAll(tails);
         head.setPosition(size/2, size/2);
         head.turnNorth();
-        for(int i = 0; i < tailsStart.size(); i++) {
-            tails.add(new Tails(tailsStart.get(i).getX(), tailsStart.get(i).getY()));
+        for(int i = 0; i < tailsStart.length; i++) {
+            tails.add(new Tails(tailsStart[i].getX(), tailsStart[i].getY()));
         }
         for(int i = 0; i < foods.length; i++) {
             foods[i].setPosition(foodsStart[i].getX(), foodsStart[i].getY());
@@ -76,7 +78,7 @@ public class World extends Observable {
                     tails.get(0).setPosition(x, y);
                     checkCollisions();
                     checkBorder();
-                    checkEat();
+                    checkEat(generateFood);
                     setChanged();
                     notifyObservers();
                     waitFor(delayed);
@@ -106,19 +108,13 @@ public class World extends Observable {
         }
     }
 
-    private void checkEat() {
+    private void checkEat(Random generateFood) {
         for(Food e : foods) {
             if(head.hit(e)) {
                 int x = tails.get(tails.size()-1).getX();
                 int y = tails.get(tails.size()-1).getY();
-                // if (head.getdX() != 0) {
-                //     x = x + head.getdX()*(-1);
-                // }else if (head.getdY() != 0) {
-                //     y = y + head.getdY()*(-1);
-                // }
                 tails.add(new Tails(x, y));
-                Random random = new Random();
-                e.setPosition(random.nextInt(size), random.nextInt(size));
+                e.setPosition(generateFood.nextInt(size), generateFood.nextInt(size));
             }
         }
     }
