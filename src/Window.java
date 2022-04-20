@@ -60,6 +60,7 @@ public class Window extends JFrame implements Observer {
             super.paint(g);
             paintGrids(g);
             paintHead(g);
+            paintScore(g);
             paintFoods(g);
             paintTails(g);
         }
@@ -84,6 +85,11 @@ public class Window extends JFrame implements Observer {
             int y = world.getHead().getY();
             g.setColor(Color.green);
             g.fillRect(x * perCell,y * perCell,perCell, perCell);
+        }
+
+        private void paintScore(Graphics g) {
+            g.setColor(Color.white);
+            g.drawString("Score = " + world.getScore(), 10, 20);
         }
 
         private void paintFoods(Graphics g) {
@@ -175,10 +181,6 @@ public class Window extends JFrame implements Observer {
                 replays.add(c);
             } else if(e.getKeyCode() == KeyEvent.VK_RIGHT && world.getHead().isEast()) {
                 Command c = new CommandTurnEast(world.getHead(), world.getTick());
-                c.execute();
-                replays.add(c);
-            } else if(e.getKeyCode() == KeyEvent.VK_Z){
-                Command c = new CommandTeleport(world.getHead(), world.getTick(), world.getSize());
                 c.execute();
                 replays.add(c);
             }

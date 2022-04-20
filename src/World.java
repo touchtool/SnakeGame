@@ -3,6 +3,7 @@ import java.util.Random;
 import java.util.List;
 import java.util.ArrayList;
 
+import javax.naming.ldap.SortControl;
 import javax.swing.plaf.TableUI;
 
 public class World extends Observable {
@@ -21,6 +22,7 @@ public class World extends Observable {
     private boolean notOver;
     private long delayed = 200;
     private int foodCount = 10;
+    private int score;
     private Food [] foods;
     private Food [] foodsStart;
 
@@ -52,6 +54,7 @@ public class World extends Observable {
 
     public void start() {
         head.reset();
+        score = 0;
         Random generateFood = new Random(randomSeed);
         tails.removeAll(tails);
         head.setPosition(size/2, size/2);
@@ -115,6 +118,7 @@ public class World extends Observable {
                 int y = tails.get(tails.size()-1).getY();
                 tails.add(new Tails(x, y));
                 e.setPosition(generateFood.nextInt(size), generateFood.nextInt(size));
+                score++;
             }
         }
     }
@@ -137,6 +141,10 @@ public class World extends Observable {
 
     public Head getHead() {
         return head;
+    }
+
+    public int getScore() {
+        return score;
     }
 
     public void turnHeadNorth() {
