@@ -28,9 +28,10 @@ public class Window extends JFrame implements Observer {
         add(gui, BorderLayout.SOUTH);
         world = new World(25);
         world.addObserver(this);
-        setSize(size+12, size);
+        setSize(size+12, size + 12);
         setAlwaysOnTop(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setResizable(false);
     }
 
     @Override
