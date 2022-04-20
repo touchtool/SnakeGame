@@ -28,7 +28,7 @@ public class Window extends JFrame implements Observer {
         add(gui, BorderLayout.SOUTH);
         world = new World(25);
         world.addObserver(this);
-        setSize(size, size);
+        setSize(size+12, size);
         setAlwaysOnTop(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
@@ -161,19 +161,19 @@ public class Window extends JFrame implements Observer {
     class Controller extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent e) {
-            if(e.getKeyCode() == KeyEvent.VK_UP) {
+            if(e.getKeyCode() == KeyEvent.VK_UP && world.getHead().isNorth()) {
                 Command c = new CommandTurnNorth(world.getHead(), world.getTick());
                 c.execute();
                 replays.add(c);
-            } else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
+            } else if(e.getKeyCode() == KeyEvent.VK_DOWN && world.getHead().isSouth()) {
                 Command c = new CommandTurnSouth(world.getHead(), world.getTick());
                 c.execute();
                 replays.add(c);
-            } else if(e.getKeyCode() == KeyEvent.VK_LEFT) {
+            } else if(e.getKeyCode() == KeyEvent.VK_LEFT && world.getHead().isWest()) {
                 Command c = new CommandTurnWest(world.getHead(), world.getTick());
                 c.execute();
                 replays.add(c);
-            } else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
+            } else if(e.getKeyCode() == KeyEvent.VK_RIGHT && world.getHead().isEast()) {
                 Command c = new CommandTurnEast(world.getHead(), world.getTick());
                 c.execute();
                 replays.add(c);
