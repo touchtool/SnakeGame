@@ -5,7 +5,6 @@ public abstract class WObject {
 
     private int dx;
     private int dy;
-    // Random random = new Random();
     private boolean isNorth=true;
     private boolean isSouth=false;
     private boolean isWest=true;
@@ -60,36 +59,12 @@ public abstract class WObject {
         this.y += dy;
     }
 
-    public void generateFood(int disX, int disY, int tick) {
-        if (tick % 2 == 0) {
-            this.x = disX + 10;
-            this.y = disY + 10;
-        } else if (tick % 3 == 0){
-            this.x = disX + 20;
-            this.y = disY + 20;
-        } else if (tick % 5 == 0){
-            this.x = disX + 30;
-            this.y = disY + 30;
-        } else if (tick % 7 == 0){
-            this.x = disX + 40;
-            this.y = disY + 40;
-        }
-    }
-
     public int getX() {
         return x;
     }
 
     public int getY() {
         return y;
-    }
-
-    public int getdX() {
-        return dx;
-    }
-
-    public int getdY() {
-        return dy;
     }
 
     public void reset() {
